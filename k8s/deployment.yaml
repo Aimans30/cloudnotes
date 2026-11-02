@@ -1,4 +1,5 @@
-﻿apiVersion: apps/v1
+
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cloudnotes
@@ -18,3 +19,16 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "64Mi"
+            limits:
+              cpu: "500m"
+              memory: "128Mi"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 2
+            periodSeconds: 5
