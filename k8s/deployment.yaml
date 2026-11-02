@@ -8,6 +8,11 @@ metadata:
     app.kubernetes.io/part-of: cloudnotes
 spec:
   replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
   selector:
     matchLabels:
       app: cloudnotes
@@ -37,3 +42,10 @@ spec:
               port: http
             initialDelaySeconds: 2
             periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+
