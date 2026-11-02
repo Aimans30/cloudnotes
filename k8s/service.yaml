@@ -2,11 +2,16 @@
 kind: Service
 metadata:
   name: cloudnotes
+  labels:
+    app: cloudnotes
+    app.kubernetes.io/name: cloudnotes
+    app.kubernetes.io/part-of: cloudnotes
 spec:
   type: ClusterIP
   selector:
     app: cloudnotes
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 80
-      targetPort: 80
+      targetPort: http

@@ -1,8 +1,11 @@
-
-apiVersion: apps/v1
+﻿apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: cloudnotes
+  labels:
+    app: cloudnotes
+    app.kubernetes.io/name: cloudnotes
+    app.kubernetes.io/part-of: cloudnotes
 spec:
   replicas: 3
   selector:
@@ -12,13 +15,15 @@ spec:
     metadata:
       labels:
         app: cloudnotes
+        app.kubernetes.io/name: cloudnotes
     spec:
       containers:
         - name: cloudnotes
           image: cloudnotes:1.0
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 80
+            - name: http
+              containerPort: 80
           resources:
             requests:
               cpu: "100m"
@@ -29,6 +34,6 @@ spec:
           readinessProbe:
             httpGet:
               path: /
-              port: 80
+              port: http
             initialDelaySeconds: 2
             periodSeconds: 5
