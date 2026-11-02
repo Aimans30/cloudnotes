@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CloudNotes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 60px auto;
+      padding: 20px;
+      background: #f4f6f8;
+      color: #222;
+    }
+    main {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+    }
+    input, button {
+      padding: 10px;
+      margin-top: 10px;
+    }
+    input { width: 65%; }
+    li { margin: 12px 0; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>CloudNotes</h1>
+    <p>Your simple cloud-based notes app.</p>
+    <form id="note-form">
+      <input id="note-input" placeholder="Write a note..." required>
+      <button type="submit">Add note</button>
+    </form>
+    <ul id="notes"></ul>
+  </main>
+  <script>
+    const form = document.getElementById("note-form");
+    const input = document.getElementById("note-input");
+    const notes = document.getElementById("notes");
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const item = document.createElement("li");
+      item.textContent = input.value;
+      notes.appendChild(item);
+      input.value = "";
+    });
+  </script>
+</body>
+</html>
