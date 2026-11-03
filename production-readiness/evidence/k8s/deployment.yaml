@@ -1,0 +1,51 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudnotes
+  labels:
+    app: cloudnotes
+    app.kubernetes.io/name: cloudnotes
+    app.kubernetes.io/part-of: cloudnotes
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: cloudnotes
+  template:
+    metadata:
+      labels:
+        app: cloudnotes
+        app.kubernetes.io/name: cloudnotes
+    spec:
+      containers:
+        - name: cloudnotes
+          image: aimana30/cloudnotes:latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 80
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "64Mi"
+            limits:
+              cpu: "500m"
+              memory: "128Mi"
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: http
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10

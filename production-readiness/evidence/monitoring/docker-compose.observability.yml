@@ -1,0 +1,116 @@
+services:
+  cloudnotes:
+    build: .
+    container_name: cloudnotes-app
+    ports:
+      - "8081:80"
+    volumes:
+      - ./monitoring/logs:/var/log/cloudnotes
+    networks:
+      - monitoring
+
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter:1.4.2
+    container_name: cloudnotes-exporter
+    command:
+      - --nginx.scrape-uri=http://cloudnotes:80/stub_status
+    ports:
+      - "9113:9113"
+    depends_on:
+      - cloudnotes
+    networks:
+      - monitoring
+
+  blackbox-exporter:
+    image: prom/blackbox-exporter:latest
+    container_name: cloudnotes-blackbox
+    ports:
+      - "9115:9115"
+    networks:
+      - monitoring
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: cloudnotes-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+    depends_on:
+      - nginx-exporter
+      - blackbox-exporter
+    networks:
+      - monitoring
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: cloudnotes-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      # Sanitized for evidence commit — do not use literal passwords in git
+      GF_SECURITY_ADMIN_PASSWORD: "REDACTED_SET_LOCALLY"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+      - loki
+    networks:
+      - monitoring
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.49.2
+    container_name: cloudnotes-cadvisor
+    ports:
+      - "8080:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/disk/:/dev/disk:ro
+    privileged: true
+    devices:
+      - /dev/kmsg
+    networks:
+      - monitoring
+
+  loki:
+    user: "0:0"
+    image: grafana/loki:3.6.0
+    container_name: cloudnotes-loki
+    command: -config.file=/etc/loki/local-config.yaml
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./monitoring/loki/loki-config.yml:/etc/loki/local-config.yaml:ro
+      - loki-data:/loki
+    networks:
+      - monitoring
+
+  promtail:
+    image: grafana/promtail:3.6.0
+    container_name: cloudnotes-promtail
+    command: -config.file=/etc/promtail/config.yml
+    volumes:
+      - ./monitoring/promtail/promtail-config.yml:/etc/promtail/config.yml:ro
+      - ./monitoring/logs:/var/log/cloudnotes:ro
+      - promtail-positions:/tmp
+    depends_on:
+      - loki
+    networks:
+      - monitoring
+
+networks:
+  monitoring:
+    driver: bridge
+
+volumes:
+  grafana-data:
+  loki-data:
+  promtail-positions:
+
