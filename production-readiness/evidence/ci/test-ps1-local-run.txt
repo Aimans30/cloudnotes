@@ -1,0 +1,6 @@
+Running CloudNotes CI tests...
+PASS: CloudNotes HTML content
+PASS: NGINX health endpoints
+PASS: Dockerfile configuration
+
+All CloudNotes CI tests passed.

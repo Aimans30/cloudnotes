@@ -1,0 +1,7 @@
+Assessment capture date: 2026-11-03
+Command: kubectl get nodes
+Observed: Unable to connect to the server (127.0.0.1 API refused).
+Interpretation: No live Kubernetes cluster was available during this readiness assessment.
+Therefore scripts/verify.ps1 could not be re-executed end-to-end on this date.
+Prior course work documents local Docker Desktop Kubernetes verification in README.md;
+that historical claim is not revalidated against the reviewed revision on 2026-11-03.

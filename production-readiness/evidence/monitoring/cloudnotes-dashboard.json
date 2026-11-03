@@ -1,0 +1,43 @@
+{
+  "uid": "cloudnotes-monitoring",
+  "title": "CloudNotes Monitoring",
+  "tags": ["cloudnotes", "monitoring"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "5s",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Traffic - Requests per second",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "Prometheus"},
+      "targets": [{"expr": "rate(nginx_http_requests_total[1m])", "legendFormat": "Requests/sec", "refId": "A"}]
+    },
+    {
+      "id": 2,
+      "title": "Latency - HTTP probe duration",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+      "datasource": {"type": "prometheus", "uid": "Prometheus"},
+      "targets": [{"expr": "probe_duration_seconds{job=\"cloudnotes-probe\"}", "legendFormat": "Probe duration", "refId": "A"}]
+    },
+    {
+      "id": 3,
+      "title": "Errors - HTTP probe failures (1 = failure)",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+      "datasource": {"type": "prometheus", "uid": "Prometheus"},
+      "targets": [{"expr": "1 - probe_success{job=\"cloudnotes-probe\"}", "legendFormat": "Probe failure", "refId": "A"}]
+    },
+    {
+      "id": 4,
+      "title": "Saturation - Active NGINX connections",
+      "type": "timeseries",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+      "datasource": {"type": "prometheus", "uid": "Prometheus"},
+      "targets": [{"expr": "nginx_connections_active", "legendFormat": "Active connections", "refId": "A"}]
+    }
+  ]
+}

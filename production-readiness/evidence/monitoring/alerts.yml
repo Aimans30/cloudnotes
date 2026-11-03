@@ -1,0 +1,11 @@
+groups:
+  - name: cloudnotes-alerts
+    rules:
+      - alert: CloudNotesEndpointDown
+        expr: probe_success{job="cloudnotes-probe"} == 0
+        for: 10s
+        labels:
+          severity: critical
+        annotations:
+          summary: CloudNotes HTTP endpoint is unavailable
+          description: The HTTP health probe has failed for more than 10 seconds.
