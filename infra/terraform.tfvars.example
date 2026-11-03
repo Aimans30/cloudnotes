@@ -1,0 +1,18 @@
+# Copy to terraform.tfvars for local overrides (do not commit secrets).
+# All values below are safe defaults for zero-cost validate/plan.
+
+project_name = "cloudnotes"
+environment  = "dev"
+region       = "us-central1"
+
+vpc_cidr        = "10.0.0.0/16"
+web_subnet_cidr = "10.0.1.0/24"
+app_subnet_cidr = "10.0.2.0/24"
+db_subnet_cidr  = "10.0.3.0/24"
+
+app_machine_type = "e2-medium"
+db_tier          = "db-f1-micro"
+db_name          = "cloudnotes"
+storage_location = "US"
+
+allowed_ingress_cidrs = ["0.0.0.0/0"]
